@@ -1,0 +1,147 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>3</storyId>
+    <title>Configure DigitalOcean Deployment &amp; Auto-Deploy</title>
+    <status>drafted</status>
+    <generatedAt>2025-11-10</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-3-configure-digitalocean-deployment-auto-deploy.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>DigitalOcean App Platform configured with auto-deploy from GitHub</iWant>
+    <soThat>pushing to `main` automatically deploys the backend with zero downtime</soThat>
+    <tasks>
+- Create `.do/app.yaml` configuration file
+- Configure FastAPI service with Gunicorn run command
+- Add environment variable placeholders
+- Configure health check endpoint
+- Configure CPU/memory alerts
+- Connect GitHub repo to DO App Platform
+- Test initial deployment
+- Test auto-deploy by pushing a commit to main
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+**Given** the architecture specifies DO App Platform with auto-deploy
+**When** I create `.do/app.yaml` configuration
+**Then** the file includes:
+- Service configuration for FastAPI backend (`apps/efofx-api/`)
+- Gunicorn run command: `gunicorn -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 app.main:app`
+- Environment variables placeholders (MONGODB_URI, JWT_SECRET_KEY, etc.)
+- Health check endpoint: `/health`
+- CPU/memory alerts configured (80% CPU, 90% memory)
+- GitHub auto-deploy enabled on `main` branch
+
+**And** when I connect the GitHub repo to DO App Platform
+**Then** the app deploys successfully
+
+**And** when I push a commit to `main`
+**Then** DigitalOcean triggers automatic deployment within 2-4 minutes
+
+**And** deployment uses zero-downtime rolling updates
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Decision Summary - CI/CD</section>
+        <snippet>DigitalOcean Auto-Deploy provides zero config GitHub integration, 2-4 min commit→live deployment, FREE with App Platform, and zero-downtime rolling deployments. Hybrid monitoring with DO App Platform for infrastructure metrics (CPU/memory/restarts) and Sentry for error tracking.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Project Epics</title>
+        <section>Epic 1: Foundation &amp; Infrastructure Setup → Story 1.3</section>
+        <snippet>Configure DigitalOcean App Platform with auto-deploy from GitHub so pushing to main automatically deploys backend with zero downtime.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>apps/estimator-project/.do/app.yaml</path>
+        <kind>config</kind>
+        <symbol>DigitalOcean App Platform configuration</symbol>
+        <lines>1-80</lines>
+        <reason>EXISTING: DO app.yaml already configured with health check (/health), auto-deploy (deploy_on_push: true), environment variables, and CORS. Uses uvicorn run command instead of gunicorn. Instance size is basic-xxs. Missing CPU/memory alerts configuration.</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/main.py</path>
+        <kind>backend</kind>
+        <symbol>Health check endpoint</symbol>
+        <lines>57-60</lines>
+        <reason>Health endpoint already implemented at GET /health returning {"status": "healthy", "service": "efOfX Estimation Service"}</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <python>
+        <package name="gunicorn" version="NOT_INSTALLED" required="latest" note="Story specifies gunicorn but existing config uses uvicorn directly" />
+        <package name="uvicorn" version="0.27.1" status="INSTALLED" />
+      </python>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+- CRITICAL: Existing DO config at apps/estimator-project/.do/app.yaml may need adaptation or separate config creation
+- Story specifies apps/efofx-api/ but existing backend is at apps/efofx-estimate/ (path discrepancy)
+- Story requires gunicorn run command but existing config uses uvicorn directly
+- Existing config has deploy_on_push: true (auto-deploy already enabled)
+- Existing config has health_check: http_path: /health (already configured)
+- MISSING: CPU/memory alerts configuration (story requires 80% CPU, 90% memory alerts)
+- MISSING: Gunicorn installation if switching from uvicorn
+- Instance size: Story specifies basic-xs (0.5 vCPU, 512 MB RAM), existing uses basic-xxs
+- GitHub repo connection: Existing config references "your-username/efofx-workspace" (needs actual repo)
+- Zero-downtime rolling deployments: Native DO App Platform feature (automatic)
+- Deployment time target: 2-4 minutes from commit to live
+- Must preserve existing environment variables and add new ones as needed
+- CORS already configured for widget embedding (allow_origins: ["*"])
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>DigitalOcean App Spec</name>
+      <kind>YAML configuration</kind>
+      <signature>.do/app.yaml with services, environment variables, health checks, and deployment settings</signature>
+      <path>.do/app.yaml (to be created or updated)</path>
+    </interface>
+    <interface>
+      <name>Health Check Endpoint</name>
+      <kind>REST endpoint</kind>
+      <signature>GET /health → {"status": "healthy"}</signature>
+      <path>apps/efofx-estimate/app/main.py</path>
+    </interface>
+    <interface>
+      <name>Gunicorn WSGI Server</name>
+      <kind>Production server</kind>
+      <signature>gunicorn -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 app.main:app</signature>
+      <path>Run command in .do/app.yaml</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+Deployment testing requires verification of auto-deploy pipeline, health endpoint availability after deployment, zero-downtime rolling updates, and proper environment variable configuration. Integration tests should verify FastAPI app starts correctly with production settings. Use DO CLI or web interface to monitor deployment status and alerts.
+    </standards>
+    <locations>
+.do/app.yaml (configuration to test)
+DigitalOcean App Platform dashboard (deployment monitoring)
+GitHub Actions logs (if enhanced CI/CD added later)
+    </locations>
+    <ideas>
+- AC Test 1: Verify .do/app.yaml file exists with correct service configuration
+- AC Test 2: Verify gunicorn run command configured correctly in app.yaml
+- AC Test 3: Verify all required environment variables present (MONGODB_URI, JWT_SECRET_KEY, etc.)
+- AC Test 4: Verify health check endpoint /health configured
+- AC Test 5: Verify CPU/memory alerts configured (80% CPU, 90% memory thresholds)
+- AC Test 6: Test GitHub connection and initial deployment succeeds
+- AC Test 7: Test auto-deploy by pushing test commit to main branch
+- AC Test 8: Verify deployment completes within 2-4 minutes
+- AC Test 9: Verify zero-downtime rolling update (existing instances remain until new ones ready)
+- Integration: Test health endpoint accessible after deployment
+- Integration: Test CORS headers allow widget embedding from different origins
+    </ideas>
+  </tests>
+</story-context>

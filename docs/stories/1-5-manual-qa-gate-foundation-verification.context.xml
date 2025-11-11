@@ -1,0 +1,211 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>5</storyId>
+    <title>Manual QA Gate - Foundation Verification</title>
+    <status>drafted</status>
+    <generatedAt>2025-11-10</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-5-manual-qa-gate-foundation-verification.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>QA tester with no prior codebase knowledge</asA>
+    <iWant>a comprehensive test guide to verify the foundation epic is complete</iWant>
+    <soThat>I can confidently approve Epic 1 before development continues</soThat>
+    <tasks>
+- Create `docs/test-guides/` directory
+- Generate comprehensive QA test guide document
+- Document prerequisites section with required accounts and tools
+- Document environment setup instructions
+- Create test cases for all Epic 1 acceptance criteria
+- Document expected results
+- Document known limitations
+- Add troubleshooting section for common issues
+- Provide sample `.env` values (non-sensitive)
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+**Given** Epic 1 implementation is complete
+**When** I generate the manual QA test guide
+**Then** the file `docs/test-guides/epic-1-foundation-qa-guide.md` is created with:
+
+**Section 1: Prerequisites**
+- List of required accounts (DigitalOcean, MongoDB Atlas, Sentry, GitHub)
+- Required tools (Node.js 20+, Python 3.11+, npm, git)
+- Test data requirements (none for Epic 1)
+
+**Section 2: Environment Setup**
+- Step-by-step instructions to clone repo
+- How to install widget dependencies (`cd apps/efofx-widget &amp;&amp; npm install`)
+- How to install backend dependencies (`cd apps/efofx-api &amp;&amp; pip install -r requirements.txt`)
+- How to configure `.env` file with test values
+
+**Section 3: Test Cases**
+- **TC1.1:** Widget builds successfully (`npm run build` produces `dist/embed.js`)
+- **TC1.2:** Backend starts successfully (`uvicorn app.main:app --reload`)
+- **TC1.3:** Health endpoint returns 200 OK (`curl http://localhost:8000/health`)
+- **TC1.4:** MongoDB connection status is "connected" in health response
+- **TC1.5:** Sentry captures test error (trigger `/test-error`, verify in Sentry dashboard)
+- **TC1.6:** DigitalOcean deployment succeeds (push to `main`, verify app is running)
+- **TC1.7:** Auto-deploy works (make trivial change, push, verify re-deployment)
+
+**Section 4: Expected Results**
+- All test cases pass without errors
+- Widget bundle size &lt; 600KB
+- Backend responds within 100ms to health check
+- MongoDB connection pool established (visible in logs)
+- Sentry error appears with full stack trace
+
+**Section 5: Known Limitations**
+- No API endpoints implemented yet (only `/health`)
+- No database collections created yet
+- No authentication/authorization yet
+- Widget shows placeholder content only
+
+**And** the test guide includes screenshots for Sentry error verification
+**And** the test guide includes command examples with expected output
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Project Epics</title>
+        <section>Epic 1: Foundation &amp; Infrastructure Setup → Story 1.5</section>
+        <snippet>Create comprehensive manual QA test guide to verify foundation epic completion, enabling confident approval before continuing development.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Project Initialization &amp; Technical Decisions</section>
+        <snippet>Technical stack includes Vite + React 19 + TypeScript for widget, FastAPI + Motor + MongoDB for backend, DigitalOcean for deployment, and Sentry for monitoring. Node.js 20+ and Python 3.11+ required.</snippet>
+      </doc>
+      <doc>
+        <path>docs/stories/1-1-initialize-white-label-widget-project.md</path>
+        <title>Story 1.1</title>
+        <section>Widget Project Initialization</section>
+        <snippet>Widget acceptance criteria: Vite builds to single embed.js bundle, embeddable in test HTML page, Tailwind configured with Shadow DOM.</snippet>
+      </doc>
+      <doc>
+        <path>docs/stories/1-2-setup-backend-project-structure-dependencies.md</path>
+        <title>Story 1.2</title>
+        <section>Backend Structure Setup</section>
+        <snippet>Backend acceptance criteria: FastAPI app with folder structure, dependencies installed, health endpoint, uvicorn starts successfully.</snippet>
+      </doc>
+      <doc>
+        <path>docs/stories/1-3-configure-digitalocean-deployment-auto-deploy.md</path>
+        <title>Story 1.3</title>
+        <section>Deployment Configuration</section>
+        <snippet>Deployment acceptance criteria: .do/app.yaml configured, GitHub auto-deploy on main branch, zero-downtime rolling updates, 2-4 min deployment time.</snippet>
+      </doc>
+      <doc>
+        <path>docs/stories/1-4-setup-mongodb-atlas-sentry-monitoring.md</path>
+        <title>Story 1.4</title>
+        <section>Database &amp; Monitoring Setup</section>
+        <snippet>MongoDB &amp; Sentry acceptance criteria: MongoDB connection established, health check includes database status, Sentry captures errors within 30 seconds, test error endpoint works.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>apps/efofx-widget/</path>
+        <kind>directory</kind>
+        <symbol>Widget project (to be created in Story 1.1)</symbol>
+        <lines>N/A</lines>
+        <reason>QA test guide needs to verify widget build process and output bundle at dist/embed.js</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/main.py</path>
+        <kind>backend</kind>
+        <symbol>FastAPI application</symbol>
+        <lines>1-78</lines>
+        <reason>QA test guide needs to verify backend starts with uvicorn, health endpoint accessible at /health</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/db/mongodb.py</path>
+        <kind>database</kind>
+        <symbol>MongoDB connection</symbol>
+        <lines>1-180</lines>
+        <reason>QA test guide needs to verify MongoDB connection established and health check returns connection status</reason>
+      </artifact>
+      <artifact>
+        <path>.do/app.yaml</path>
+        <kind>config</kind>
+        <symbol>DigitalOcean deployment config</symbol>
+        <lines>N/A</lines>
+        <reason>QA test guide needs to verify deployment configuration and auto-deploy functionality</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <nodejs>
+        <package name="Node.js" version="20+" required="true" />
+      </nodejs>
+      <python>
+        <package name="Python" version="3.11+" required="true" />
+      </python>
+      <tools>
+        <tool name="npm" required="true" />
+        <tool name="git" required="true" />
+        <tool name="uvicorn" required="true" />
+        <tool name="curl" required="true" note="For health endpoint testing" />
+      </tools>
+      <accounts>
+        <account name="DigitalOcean" required="true" note="For deployment testing" />
+        <account name="MongoDB Atlas" required="true" note="For database connection testing" />
+        <account name="Sentry" required="true" note="For error tracking verification" />
+        <account name="GitHub" required="true" note="For auto-deploy testing" />
+      </accounts>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+- Test guide MUST be runnable by QA tester with no prior codebase knowledge
+- Test guide MUST be written in plain language, avoiding unnecessary technical jargon
+- All commands MUST include expected output examples
+- Test cases MUST map directly to Epic 1 stories 1.1-1.4 acceptance criteria
+- Test guide MUST include troubleshooting section for common issues (connection failures, missing dependencies, etc.)
+- Sample .env values MUST be non-sensitive (use placeholders like "your-mongodb-uri-here")
+- Screenshots SHOULD be included for Sentry error verification (visual confirmation)
+- Test guide path: docs/test-guides/epic-1-foundation-qa-guide.md
+- Widget bundle size target: &lt; 600KB unoptimized
+- Backend health check response time target: &lt; 100ms
+- Sentry error capture time: within 30 seconds of triggering /test-error endpoint
+- Epic 1 approval: Gated on user (Brett) confirming all test cases pass
+- Known limitations MUST be clearly documented to set expectations
+- Test guide creation is the FINAL step before Epic 1 can be approved
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Manual QA Test Guide</name>
+      <kind>Markdown documentation</kind>
+      <signature>docs/test-guides/epic-1-foundation-qa-guide.md</signature>
+      <path>docs/test-guides/epic-1-foundation-qa-guide.md (to be created)</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+Manual QA testing requires human verification of all test cases. Automated tests from stories 1.1-1.4 provide baseline confidence, but manual QA ensures end-to-end system works as integrated whole. Test guide should enable repeatable, consistent verification by any QA tester.
+    </standards>
+    <locations>
+docs/test-guides/epic-1-foundation-qa-guide.md (manual test guide to be created)
+All Epic 1 story files (1-1 through 1-4) for acceptance criteria reference
+    </locations>
+    <ideas>
+- Verify test guide document created at correct path
+- Verify Prerequisites section lists all required accounts and tools
+- Verify Environment Setup section has step-by-step clone and install instructions
+- Verify Test Cases section includes all 7 test cases (TC1.1-TC1.7)
+- Verify each test case maps to specific Epic 1 story acceptance criteria
+- Verify Expected Results section defines success criteria
+- Verify Known Limitations section sets clear expectations
+- Verify troubleshooting section provides solutions for common issues
+- Verify sample .env file includes all required variables with placeholder values
+- Verify command examples include expected output snippets
+- Manual execution: Follow test guide step-by-step to verify completeness and accuracy
+- User acceptance: Brett runs all test cases and confirms pass/fail status
+    </ideas>
+  </tests>
+</story-context>

@@ -1,0 +1,208 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>2</storyId>
+    <title>Setup Backend Project Structure &amp; Dependencies</title>
+    <status>drafted</status>
+    <generatedAt>2025-11-10</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-2-setup-backend-project-structure-dependencies.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>the FastAPI backend organized with the architecture-specified folder structure and core dependencies installed</iWant>
+    <soThat>I can implement features following consistent patterns</soThat>
+    <tasks>
+- Create folder structure following architecture specification
+- Create `requirements.txt` with all core dependencies
+- Create `app/main.py` with FastAPI app initialization
+- Create `app/core/config.py` with Pydantic Settings
+- Add basic CORS middleware for widget embedding
+- Create health endpoint: `GET /health`
+- Create `.env.example` with documented environment variables
+- Verify server starts successfully with uvicorn
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+**Given** the architecture defines the backend structure at `apps/efofx-api/`
+**When** I set up the project structure
+**Then** all folders are created following architecture spec:
+- `app/api/v1/endpoints/` for API routes
+- `app/core/` for config, security, logging
+- `app/models/` for Pydantic models
+- `app/services/` for business logic
+- `app/db/` for MongoDB connection
+- `app/middleware/` for tenant isolation, CORS, rate limiting
+- `app/utils/` for shared utilities
+- `config/prompts/` for git-based prompt JSON files
+
+**And** core dependencies are installed in `requirements.txt`:
+- fastapi&gt;=0.100.0
+- motor&gt;=3.0.0 (async MongoDB)
+- pydantic&gt;=2.0.0
+- pydantic-settings (for config)
+- python-jose[cryptography] (JWT)
+- cryptography&gt;=41.0.0 (Fernet for BYOK)
+- structlog&gt;=24.0.0
+- slowapi&gt;=0.1.0 (rate limiting)
+- sentry-sdk[fastapi]&gt;=2.0.0
+
+**And** `app/main.py` exists with FastAPI app initialization and health endpoint
+**And** `app/core/config.py` exists with Pydantic Settings for env vars
+**And** running `uvicorn app.main:app --reload` starts the server successfully
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Backend Structure &amp; Cross-Cutting Concerns</section>
+        <snippet>Defines backend folder structure with app/api/v1/endpoints/ for API routes, core/security.py for authentication, structured logging with tenant context, and testing infrastructure using pytest for backend. Emphasizes multi-tenant isolation patterns and dependency injection for tenant_id extraction.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Project Epics</title>
+        <section>Epic 1: Foundation &amp; Infrastructure Setup → Story 1.2</section>
+        <snippet>Establishes goal of organizing FastAPI backend with architecture-specified folder structure and installing core dependencies to enable consistent feature implementation patterns.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Technical Architecture</section>
+        <snippet>Brownfield FastAPI + MongoDB foundation requires enhancement with synthetic data generation, feedback system, white label widget integration, and domain-agnostic refactoring.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>apps/efofx-estimate/app/main.py</path>
+        <kind>backend</kind>
+        <symbol>FastAPI application entry point</symbol>
+        <lines>1-78</lines>
+        <reason>EXISTING: FastAPI app already initialized with CORS middleware, health endpoint, and API router. Story may need to enhance or reorganize this existing structure.</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/core/config.py</path>
+        <kind>config</kind>
+        <symbol>Settings configuration</symbol>
+        <lines>N/A</lines>
+        <reason>EXISTING: Pydantic Settings for environment variables already implemented. Story may need to add additional config for new features.</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/api/</path>
+        <kind>directory</kind>
+        <symbol>API routes</symbol>
+        <lines>N/A</lines>
+        <reason>EXISTING: API routing structure already exists. Story specifies app/api/v1/endpoints/ pattern.</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/core/</path>
+        <kind>directory</kind>
+        <symbol>Core utilities (config, security)</symbol>
+        <lines>N/A</lines>
+        <reason>EXISTING: Core folder exists with config.py, security.py, constants.py</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/models/</path>
+        <kind>directory</kind>
+        <symbol>Pydantic models</symbol>
+        <lines>N/A</lines>
+        <reason>EXISTING: Models folder exists with tenant.py, feedback.py, estimation.py</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/services/</path>
+        <kind>directory</kind>
+        <symbol>Business logic</symbol>
+        <lines>N/A</lines>
+        <reason>EXISTING: Services folder exists for business logic implementation</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/db/</path>
+        <kind>directory</kind>
+        <symbol>Database connection</symbol>
+        <lines>N/A</lines>
+        <reason>EXISTING: Database folder exists for MongoDB connection logic</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/utils/</path>
+        <kind>directory</kind>
+        <symbol>Shared utilities</symbol>
+        <lines>N/A</lines>
+        <reason>EXISTING: Utils folder exists with calculation_utils.py, validation_utils.py, file_utils.py</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <python>
+        <package name="fastapi" version="0.116.1" status="INSTALLED" />
+        <package name="uvicorn" version="0.27.1" status="INSTALLED" />
+        <package name="motor" version="3.3.2" status="INSTALLED" />
+        <package name="pymongo" version="4.6.1" status="INSTALLED" />
+        <package name="pydantic" version="2.11.7" status="INSTALLED" />
+        <package name="pydantic-settings" version="2.2.1" status="INSTALLED" />
+        <package name="python-jose[cryptography]" version="3.3.0" status="INSTALLED" />
+        <package name="python-dotenv" version="1.0.1" status="INSTALLED" />
+        <package name="cryptography" version="NOT_INSTALLED" required="&gt;=41.0.0" />
+        <package name="structlog" version="NOT_INSTALLED" required="&gt;=24.0.0" />
+        <package name="slowapi" version="NOT_INSTALLED" required="&gt;=0.1.0" />
+        <package name="sentry-sdk[fastapi]" version="NOT_INSTALLED" required="&gt;=2.0.0" />
+      </python>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+- CRITICAL: Existing backend is at apps/efofx-estimate/ (NOT apps/efofx-api/ as story mentions - may need path correction)
+- Most folder structure ALREADY EXISTS: api/, core/, models/, services/, db/, utils/
+- MISSING folders that need creation: app/middleware/, config/prompts/
+- MISSING dependencies that need installation: cryptography (&gt;=41.0.0), structlog (&gt;=24.0.0), slowapi (&gt;=0.1.0), sentry-sdk[fastapi] (&gt;=2.0.0)
+- main.py ALREADY EXISTS with FastAPI app, CORS middleware, and /health endpoint
+- core/config.py ALREADY EXISTS with Pydantic Settings
+- MUST create .env.example with documented environment variables if not exists
+- MUST verify server starts with: uvicorn app.main:app --reload
+- Follow existing code patterns and structure in apps/efofx-estimate/
+- Maintain backward compatibility with existing endpoints and functionality
+- Git-based prompt management requires config/prompts/ directory for JSON files (architecture decision)
+- Health endpoint signature must remain: GET /health → {"status": "healthy"}
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Health Check Endpoint</name>
+      <kind>REST endpoint</kind>
+      <signature>GET /health → {"status": "healthy", "service": "efOfX Estimation Service"}</signature>
+      <path>apps/efofx-estimate/app/main.py (lines 57-60)</path>
+    </interface>
+    <interface>
+      <name>FastAPI Application</name>
+      <kind>ASGI application</kind>
+      <signature>app = FastAPI(...) with CORS middleware, API router at /api/v1</signature>
+      <path>apps/efofx-estimate/app/main.py</path>
+    </interface>
+    <interface>
+      <name>Configuration Settings</name>
+      <kind>Pydantic Settings</kind>
+      <signature>from app.core.config import settings</signature>
+      <path>apps/efofx-estimate/app/core/config.py</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+Backend uses pytest with pytest-asyncio for async testing. Test files follow test_*.py naming convention. Testing dependencies already installed: pytest==8.4.1, pytest-asyncio==0.23.5, httpx==0.27.0 (for FastAPI test client). Tests should verify health endpoint, dependency installation, and server startup.
+    </standards>
+    <locations>
+apps/efofx-estimate/tests/ (to be created for backend tests)
+Existing test structure may be in place - verify with find command
+    </locations>
+    <ideas>
+- AC Test 1: Verify all required folders exist (app/middleware/, config/prompts/ are new)
+- AC Test 2: Verify all dependencies installed (check cryptography, structlog, slowapi, sentry-sdk)
+- AC Test 3: Test uvicorn app.main:app starts without errors
+- AC Test 4: Test health endpoint returns correct response: GET /health → {"status": "healthy"}
+- AC Test 5: Verify .env.example exists and documents all required environment variables
+- Integration: Test CORS middleware allows widget embedding from different origins
+- Unit: Test Pydantic Settings loads environment variables correctly
+    </ideas>
+  </tests>
+</story-context>

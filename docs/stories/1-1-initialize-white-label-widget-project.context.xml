@@ -1,0 +1,141 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>1</storyId>
+    <title>Initialize White Label Widget Project</title>
+    <status>drafted</status>
+    <generatedAt>2025-11-10</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-1-initialize-white-label-widget-project.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>a modern Vite + React + TypeScript widget project scaffolded with all architectural decisions implemented</iWant>
+    <soThat>I can start building the embeddable chat widget on a solid foundation</soThat>
+    <tasks>
+- Create Vite project at `apps/efofx-widget/` with React + TypeScript template
+- Install and configure Tailwind CSS with PostCSS
+- Install `vite-plugin-css-injected-by-js` plugin
+- Configure Vite to output single `embed.js` bundle
+- Create basic folder structure (components, api, hooks, types)
+- Create Shadow DOM wrapper component stub
+- Verify build produces single bundle file
+- Test widget embedding in test HTML page
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+**Given** the architecture specifies Vite + React 19 + TypeScript + Tailwind + Shadow DOM
+**When** I run the widget initialization commands
+**Then** the project structure is created at `apps/efofx-widget/` with:
+- Vite configuration for single `embed.js` bundle output
+- React 19 and TypeScript 5.x installed
+- Tailwind CSS configured with PostCSS
+- `vite-plugin-css-injected-by-js` for inline CSS
+- Shadow DOM wrapper component stub
+- Package.json with build scripts
+- Basic folder structure: `src/components/`, `src/api/`, `src/hooks/`, `src/types/`
+
+**And** running `npm run build` produces a single `dist/embed.js` file
+
+**And** the widget can be embedded in a test HTML page with `&lt;script src="dist/embed.js"&gt;&lt;/script&gt;`
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Project Initialization → White Label Chat Widget</section>
+        <snippet>Provides complete initialization commands using Vite + React + TypeScript template, dependency installation (tailwindcss, vite-plugin-css-injected-by-js), and technical decisions table showing versions (Vite 5.4+, React 19, TypeScript 5.x, Tailwind 3.x). Specifies production build output as single embed.js (~520KB) with Shadow DOM for style isolation.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Project Epics</title>
+        <section>Epic 1: Foundation &amp; Infrastructure Setup → Story 1.1</section>
+        <snippet>Establishes goal of scaffolding modern Vite + React + TypeScript widget project with all architectural decisions implemented to enable embeddable chat widget development.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Distribution Success (White Label Adoption)</section>
+        <snippet>Widget must work on contractor sites with &lt;5 lines of JavaScript, drive estimation requests, and maintain zero security incidents. Target: 10 contractors embed widget, driving 50+ estimates.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>apps/efofx-estimate/</path>
+        <kind>backend</kind>
+        <symbol>FastAPI application</symbol>
+        <lines>N/A</lines>
+        <reason>Existing brownfield FastAPI + MongoDB backend that widget will communicate with for estimation API</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <nodejs>
+        <package name="vite" version="5.4+" />
+        <package name="react" version="19.x" />
+        <package name="typescript" version="5.x" />
+        <package name="tailwindcss" version="3.x" />
+        <package name="postcss" version="latest" />
+        <package name="autoprefixer" version="latest" />
+        <package name="vite-plugin-css-injected-by-js" version="3.5+" />
+        <package name="@rollup/plugin-babel" version="latest" />
+        <package name="@rollup/plugin-commonjs" version="latest" />
+      </nodejs>
+      <python>
+        <note>Backend dependencies in apps/efofx-estimate/pyproject.toml and requirements.txt</note>
+      </python>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+- MUST use Vite as build tool with React TypeScript template
+- MUST configure Rollup (via Vite) to output single embed.js bundle file
+- MUST use React 19.x for component-based chat UI architecture
+- MUST use TypeScript 5.x to ensure API contract consistency with FastAPI backend
+- MUST use Tailwind CSS 3.x for utility-first styling and tenant branding customization
+- MUST use vite-plugin-css-injected-by-js to inject CSS via JS (no separate stylesheet)
+- MUST implement Shadow DOM for style isolation to prevent CSS conflicts with host site
+- Target build output: ~520KB optimized for single embed.js file
+- Widget MUST be embeddable with &lt;5 lines of JavaScript code
+- Widget MUST load asynchronously and not block host site page load
+- Create folder structure: src/components/, src/api/, src/hooks/, src/types/
+- All versions verified as of 2025-11-10 for compatibility with Node.js 20+
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Widget Initialization API</name>
+      <kind>JavaScript API</kind>
+      <signature>efofxWidget.init({ apiKey: 'efofx_...' })</signature>
+      <path>apps/efofx-widget/src/ (to be created)</path>
+    </interface>
+    <interface>
+      <name>Widget Embedding</name>
+      <kind>HTML Script Tag</kind>
+      <signature>&lt;script src="https://widget.efofx.ai/embed.js"&gt;&lt;/script&gt;</signature>
+      <path>apps/efofx-widget/dist/embed.js (build output)</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+Architecture specifies Playwright for E2E testing with TypeScript API. Playwright provides native Shadow DOM piercing (critical for widget isolation testing), cross-browser support (Chrome/Firefox/Safari), and TypeScript consistency with widget code. No existing widget tests yet (greenfield component). Backend uses Python/pytest patterns (see apps/efofx-estimate/).
+    </standards>
+    <locations>
+apps/efofx-widget/tests/ (to be created for widget E2E tests)
+apps/efofx-estimate/tests/ (backend tests location)
+    </locations>
+    <ideas>
+- AC Test 1: Verify project structure created at apps/efofx-widget/ with all specified dependencies installed
+- AC Test 2: Verify npm run build produces single dist/embed.js file
+- AC Test 3: Create test HTML page and verify widget embeds successfully with script tag
+- AC Test 4: Verify Shadow DOM isolation prevents CSS conflicts with host page styles
+- AC Test 5: Verify build output size is reasonable (&lt;600KB before optimization, ~520KB target)
+- Integration: Verify widget can make API calls to existing FastAPI backend
+- E2E: Use Playwright to test widget initialization and rendering in different browsers
+    </ideas>
+  </tests>
+</story-context>

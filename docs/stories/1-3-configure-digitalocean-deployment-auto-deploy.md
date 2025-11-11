@@ -1,6 +1,6 @@
 # Story 1.3: Configure DigitalOcean Deployment & Auto-Deploy
 
-Status: backlog
+Status: review
 
 ## Story
 
@@ -30,14 +30,14 @@ So that pushing to `main` automatically deploys the backend with zero downtime.
 
 ## Tasks / Subtasks
 
-- [ ] Create `.do/app.yaml` configuration file
-- [ ] Configure FastAPI service with Gunicorn run command
-- [ ] Add environment variable placeholders
-- [ ] Configure health check endpoint
-- [ ] Configure CPU/memory alerts
-- [ ] Connect GitHub repo to DO App Platform
-- [ ] Test initial deployment
-- [ ] Test auto-deploy by pushing a commit to main
+- [x] Create `.do/app.yaml` configuration file
+- [x] Configure FastAPI service with Gunicorn run command
+- [x] Add environment variable placeholders
+- [x] Configure health check endpoint
+- [x] Configure CPU/memory alerts
+- [ ] Connect GitHub repo to DO App Platform (manual step - requires DO account)
+- [ ] Test initial deployment (manual step - requires DO account and GitHub connection)
+- [ ] Test auto-deploy by pushing a commit to main (manual step - requires deployment)
 
 ## Dev Notes
 
@@ -61,11 +61,11 @@ Story 1.2 (backend structure ready)
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/stories/1-3-configure-digitalocean-deployment-auto-deploy.context.xml
 
 ### Agent Model Used
 
-<!-- To be filled by dev agent -->
+claude-sonnet-4-5-20250929
 
 ### Debug Log References
 
@@ -73,8 +73,31 @@ Story 1.2 (backend structure ready)
 
 ### Completion Notes List
 
-<!-- To be filled by dev agent upon completion -->
+- ✅ Created comprehensive `.do/app.yaml` configuration for DigitalOcean App Platform
+- ✅ Configured Gunicorn run command: `gunicorn -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 app.main:app`
+- ✅ Added Gunicorn>=21.0.0 to requirements.txt
+- ✅ Set instance size to basic-xs (0.5 vCPU, 512 MB RAM) as specified
+- ✅ Configured health check endpoint: `/health` with proper thresholds
+- ✅ Added all required environment variables with SECRET type for sensitive values
+- ✅ Configured CPU alert at 80% utilization
+- ✅ Configured Memory alert at 90% utilization
+- ✅ Configured deployment failure and restart count alerts
+- ✅ Enabled GitHub auto-deploy on main branch (deploy_on_push: true)
+- ✅ Configured CORS for widget embedding
+- ✅ Used zero-downtime rolling deployments (built-in DO App Platform feature)
+- 📝 Manual steps remaining (requires DO account):
+  - Connect GitHub repository to DO App Platform
+  - Configure DO secrets for sensitive environment variables
+  - Test initial deployment
+  - Verify auto-deploy by pushing to main branch
 
 ### File List
 
-<!-- NEW/MODIFIED/DELETED files will be listed here by dev agent -->
+**NEW:**
+- apps/efofx-estimate/.do/app.yaml (complete DigitalOcean App Platform configuration)
+
+**MODIFIED:**
+- apps/efofx-estimate/requirements.txt (added gunicorn>=21.0.0)
+
+**REFERENCE:**
+- apps/estimator-project/.do/app.yaml (existing config used as reference)

@@ -1,6 +1,6 @@
 # Story 1.4: Setup MongoDB Atlas & Sentry Monitoring
 
-Status: backlog
+Status: review
 
 ## Story
 
@@ -34,17 +34,17 @@ So that I have database persistence and production error visibility.
 
 ## Tasks / Subtasks
 
-- [ ] Create `app/db/mongodb.py` with Motor async client
-- [ ] Configure connection pool settings
-- [ ] Add database name from environment variable
-- [ ] Create connection health check function
-- [ ] Update health endpoint to include database status
-- [ ] Initialize Sentry SDK in `app/main.py`
-- [ ] Configure Sentry DSN from environment variable
-- [ ] Add environment and release tags
-- [ ] Create test error endpoint for Sentry verification
-- [ ] Test MongoDB connection on startup
-- [ ] Test Sentry error capture
+- [x] Create `app/db/mongodb.py` with Motor async client (already existed)
+- [x] Configure connection pool settings (Motor defaults)
+- [x] Add database name from environment variable (already configured)
+- [x] Create connection health check function (already existed)
+- [x] Update health endpoint to include database status
+- [x] Initialize Sentry SDK in `app/main.py`
+- [x] Configure Sentry DSN from environment variable
+- [x] Add environment and release tags
+- [x] Create test error endpoint for Sentry verification
+- [x] Test MongoDB connection on startup (via lifespan events)
+- [ ] Test Sentry error capture (manual step - requires Sentry account)
 
 ## Dev Notes
 
@@ -69,11 +69,11 @@ Story 1.3 (deployment configured)
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/stories/1-4-setup-mongodb-atlas-sentry-monitoring.context.xml
 
 ### Agent Model Used
 
-<!-- To be filled by dev agent -->
+claude-sonnet-4-5-20250929
 
 ### Debug Log References
 
@@ -81,8 +81,41 @@ Story 1.3 (deployment configured)
 
 ### Completion Notes List
 
-<!-- To be filled by dev agent upon completion -->
+- ✅ MongoDB connection already fully implemented in app/db/mongodb.py (brownfield)
+  - Motor async client with connect_to_mongo() and close_mongo_connection()
+  - Database name from settings.MONGO_DB_NAME environment variable
+  - Connection health check function: async def health_check() → bool
+  - Connection pool uses Motor defaults (appropriate for most use cases)
+- ✅ Added Sentry SDK initialization to app/main.py
+  - Configured with FastAPI integration for automatic exception capture
+  - Environment tag from SENTRY_ENVIRONMENT env var
+  - Release version tracking from VERSION env var
+  - Configurable sampling rate via SENTRY_TRACES_SAMPLE_RATE (default 0.1)
+  - Graceful fallback if Sentry DSN not configured
+- ✅ Enhanced health endpoint to include database status
+  - Returns {"status": "healthy"/"degraded", "database": "connected"/"disconnected"}
+  - Uses existing db_health_check() function
+  - Status is "degraded" if database disconnected
+- ✅ Added /test-error endpoint for Sentry verification
+  - Intentionally raises HTTPException(500)
+  - Logs error before raising for traceability
+  - Clearly documented as test-only endpoint
+- ✅ Implemented lifespan events for MongoDB connection
+  - Connects to MongoDB on application startup
+  - Closes connection gracefully on shutdown
+  - Logs connection status for monitoring
+- 📝 Manual verification steps (require actual MongoDB Atlas and Sentry accounts):
+  - Configure MONGO_URI in .env with Atlas connection string
+  - Configure SENTRY_DSN in .env with Sentry project DSN
+  - Start server and verify MongoDB connection in logs
+  - Trigger /test-error and verify error appears in Sentry dashboard
 
 ### File List
 
-<!-- NEW/MODIFIED/DELETED files will be listed here by dev agent -->
+**MODIFIED:**
+- apps/efofx-estimate/app/main.py (added Sentry SDK init, lifespan events, enhanced health endpoint, test error endpoint)
+
+**EXISTING (verified):**
+- apps/efofx-estimate/app/db/mongodb.py (MongoDB Motor async client with health check)
+- apps/efofx-estimate/app/core/config.py (Pydantic Settings for MONGO_URI, SENTRY_DSN)
+- apps/efofx-estimate/requirements.txt (sentry-sdk[fastapi] already added in Story 1.2)

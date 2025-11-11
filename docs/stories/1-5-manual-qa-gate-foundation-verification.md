@@ -1,6 +1,6 @@
 # Story 1.5: Manual QA Gate - Foundation Verification
 
-Status: backlog
+Status: review
 
 ## Story
 
@@ -52,15 +52,15 @@ So that I can confidently approve Epic 1 before development continues.
 
 ## Tasks / Subtasks
 
-- [ ] Create `docs/test-guides/` directory
-- [ ] Generate comprehensive QA test guide document
-- [ ] Document prerequisites section with required accounts and tools
-- [ ] Document environment setup instructions
-- [ ] Create test cases for all Epic 1 acceptance criteria
-- [ ] Document expected results
-- [ ] Document known limitations
-- [ ] Add troubleshooting section for common issues
-- [ ] Provide sample `.env` values (non-sensitive)
+- [x] Create `docs/test-guides/` directory
+- [x] Generate comprehensive QA test guide document
+- [x] Document prerequisites section with required accounts and tools
+- [x] Document environment setup instructions
+- [x] Create test cases for all Epic 1 acceptance criteria
+- [x] Document expected results
+- [x] Document known limitations
+- [x] Add troubleshooting section for common issues
+- [x] Provide sample `.env` values (non-sensitive)
 
 ## Dev Notes
 
@@ -84,11 +84,11 @@ Stories 1.1-1.4 (all foundation stories complete)
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/stories/1-5-manual-qa-gate-foundation-verification.context.xml
 
 ### Agent Model Used
 
-<!-- To be filled by dev agent -->
+claude-sonnet-4-5-20250929
 
 ### Debug Log References
 
@@ -96,8 +96,46 @@ Stories 1.1-1.4 (all foundation stories complete)
 
 ### Completion Notes List
 
-<!-- To be filled by dev agent upon completion -->
+- ✅ Created comprehensive manual QA test guide at docs/test-guides/epic-1-foundation-qa-guide.md
+- ✅ Guide is structured for testers with no prior codebase knowledge
+- ✅ Documented all required accounts: GitHub, MongoDB Atlas, Sentry, DigitalOcean
+- ✅ Documented all required tools: Node.js 20+, Python 3.11+, npm, git, curl with verification commands
+- ✅ Provided step-by-step environment setup:
+  - Repository cloning instructions
+  - Widget dependency installation and build
+  - Backend virtual environment setup
+  - Environment variable configuration with examples
+  - MongoDB Atlas and Sentry setup instructions
+- ✅ Created 7 test cases covering all Epic 1 stories:
+  - TC1.1: Widget builds successfully
+  - TC1.2: Backend starts successfully
+  - TC1.3: Health endpoint returns 200 OK
+  - TC1.4: MongoDB connection status in health response
+  - TC1.5: Sentry captures test error
+  - TC1.6: DigitalOcean deployment configuration exists
+  - TC1.7: Widget embeds in test HTML page
+- ✅ Each test case includes:
+  - Clear objective
+  - Step-by-step instructions with commands
+  - Expected output examples
+  - Pass/fail criteria
+- ✅ Documented expected results with performance benchmarks
+- ✅ Documented known limitations (no business logic, empty database, placeholder widget, etc.)
+- ✅ Added comprehensive troubleshooting section with 6 common issues and solutions
+- ✅ Included approval checklist for Epic 1 completion
+- ✅ Guide uses plain language, avoids unnecessary jargon
+- ✅ All commands include expected output for easy verification
+- 📝 Guide is ready for use by QA team or Brett for Epic 1 verification
 
 ### File List
 
-<!-- NEW/MODIFIED/DELETED files will be listed here by dev agent -->
+**NEW:**
+- docs/test-guides/epic-1-foundation-qa-guide.md (comprehensive manual QA test guide)
+
+**REFERENCE (guides refer to these):**
+- apps/efofx-widget/ (Story 1.1)
+- apps/efofx-estimate/ (Story 1.2)
+- apps/efofx-estimate/.do/app.yaml (Story 1.3)
+- apps/efofx-estimate/app/main.py (Story 1.4)
+- apps/efofx-estimate/SETUP.md (Story 1.2)
+- apps/efofx-estimate/.env.example (Story 1.2)

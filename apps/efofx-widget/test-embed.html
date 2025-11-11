@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>efOfX Widget - Test Embed</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #f5f5f5;
+    }
+    .header {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .info {
+      background: #e3f2fd;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 2rem;
+      border-left: 4px solid #2196f3;
+    }
+    #widget-container {
+      min-height: 400px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>efOfX Widget Test Page</h1>
+    <p>This page tests the embeddable chat widget with Shadow DOM isolation.</p>
+  </div>
+
+  <div class="info">
+    <strong>Test Instructions:</strong>
+    <ol>
+      <li>Widget should load below without affecting page styles</li>
+      <li>Widget styles should be isolated via Shadow DOM</li>
+      <li>Widget should be interactive and functional</li>
+    </ol>
+  </div>
+
+  <div id="widget-container"></div>
+
+  <!-- Load the widget bundle -->
+  <script src="dist/embed.js"></script>
+  <script>
+    // Initialize the widget
+    if (window.efofxWidget && window.efofxWidget.init) {
+      window.efofxWidget.init({ containerId: 'widget-container' });
+      console.log('efOfX Widget initialized successfully!');
+    } else {
+      console.error('Widget failed to load. Check embed.js');
+    }
+  </script>
+</body>
+</html>

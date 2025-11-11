@@ -1,0 +1,187 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>4</storyId>
+    <title>Setup MongoDB Atlas &amp; Sentry Monitoring</title>
+    <status>drafted</status>
+    <generatedAt>2025-11-10</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-4-setup-mongodb-atlas-sentry-monitoring.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>MongoDB Atlas connected and Sentry error tracking configured</iWant>
+    <soThat>I have database persistence and production error visibility</soThat>
+    <tasks>
+- Create `app/db/mongodb.py` with Motor async client
+- Configure connection pool settings
+- Add database name from environment variable
+- Create connection health check function
+- Update health endpoint to include database status
+- Initialize Sentry SDK in `app/main.py`
+- Configure Sentry DSN from environment variable
+- Add environment and release tags
+- Create test error endpoint for Sentry verification
+- Test MongoDB connection on startup
+- Test Sentry error capture
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+**Given** the architecture specifies MongoDB Atlas and Sentry
+**When** I configure MongoDB connection
+**Then** `app/db/mongodb.py` contains:
+- Motor async client initialization
+- Connection pool configuration (10-50 connections)
+- Database name from env var
+- Connection health check function
+
+**And** when the FastAPI app starts
+**Then** MongoDB connection is established successfully
+**And** health endpoint (`/health`) includes database status check
+
+**And** when I configure Sentry SDK
+**Then** `app/main.py` initializes sentry-sdk with:
+- DSN from environment variable
+- FastAPI integration enabled
+- Environment tag (production/staging/development)
+- Release version tracking
+
+**And** when I trigger a test error endpoint
+**Then** the error appears in Sentry dashboard within 30 seconds
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Decision Summary - Monitoring</section>
+        <snippet>Hybrid monitoring with DO App Platform for infrastructure metrics (CPU/memory/restarts) and Sentry SDK 2.0+ for error tracking and performance tracing. Both FREE for MVP with complementary coverage. Motor 3.0+ provides async MongoDB driver for FastAPI.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Multi-Tenant Isolation</section>
+        <snippet>MongoDB indexes must include tenant_id as first field: (tenant_id, category, region). All queries MUST filter by tenant_id for zero-trust multi-tenant isolation.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Project Epics</title>
+        <section>Epic 1: Foundation &amp; Infrastructure Setup → Story 1.4</section>
+        <snippet>Connect MongoDB Atlas and configure Sentry error tracking to provide database persistence and production error visibility.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>apps/efofx-estimate/app/db/mongodb.py</path>
+        <kind>database</kind>
+        <symbol>MongoDB connection management</symbol>
+        <lines>1-180</lines>
+        <reason>EXISTING: Motor async client already implemented with connect_to_mongo(), close_mongo_connection(), get_database(), health_check(), and index creation. Connection pool uses Motor defaults. Database name from settings.MONGO_DB_NAME. Health check function exists at lines 155-163.</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/main.py</path>
+        <kind>backend</kind>
+        <symbol>FastAPI application entry point</symbol>
+        <lines>1-78</lines>
+        <reason>Main application file where Sentry SDK initialization should be added. Currently has health endpoint but needs Sentry integration and database health check integration.</reason>
+      </artifact>
+      <artifact>
+        <path>apps/efofx-estimate/app/core/config.py</path>
+        <kind>config</kind>
+        <symbol>Settings configuration</symbol>
+        <lines>N/A</lines>
+        <reason>Pydantic Settings for environment variables. Needs SENTRY_DSN, SENTRY_ENVIRONMENT, and SENTRY_RELEASE config if not present.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <python>
+        <package name="motor" version="3.3.2" status="INSTALLED" />
+        <package name="pymongo" version="4.6.1" status="INSTALLED" />
+        <package name="sentry-sdk[fastapi]" version="NOT_INSTALLED" required="&gt;=2.0.0" />
+      </python>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+- CRITICAL: MongoDB connection code ALREADY EXISTS in apps/efofx-estimate/app/db/mongodb.py
+- Motor async client already initialized with connect_to_mongo() function
+- Connection pool: Motor uses default connection pool settings (can be customized if needed)
+- Database name: Already configured from settings.MONGO_DB_NAME environment variable
+- Health check function: Already exists (async def health_check() at lines 155-163)
+- MISSING: Sentry SDK not installed (sentry-sdk[fastapi] >= 2.0.0 required)
+- MISSING: Sentry initialization in app/main.py
+- MISSING: Health endpoint integration with database health check
+- MISSING: Test error endpoint for Sentry verification
+- MongoDB Atlas free tier (M0) sufficient for MVP
+- Sentry free tier: 5,000 errors/month covers MVP needs
+- Indexes already created in create_indexes() function (lines 107-152) with tenant_id isolation
+- Connection status logging: Already implemented in connect_to_mongo() (line 33)
+- Sentry should capture FastAPI exceptions, performance traces, and custom errors
+- Environment tags: production/staging/development based on deployment environment
+- Release tracking: Use version from FastAPI app or git commit SHA
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>MongoDB Connection</name>
+      <kind>Database client</kind>
+      <signature>connect_to_mongo() → AsyncIOMotorClient, get_database() → AsyncIOMotorDatabase</signature>
+      <path>apps/efofx-estimate/app/db/mongodb.py</path>
+    </interface>
+    <interface>
+      <name>Database Health Check</name>
+      <kind>Async function</kind>
+      <signature>async def health_check() → bool</signature>
+      <path>apps/efofx-estimate/app/db/mongodb.py (lines 155-163)</path>
+    </interface>
+    <interface>
+      <name>Health Endpoint</name>
+      <kind>REST endpoint</kind>
+      <signature>GET /health → {"status": "healthy", "service": "...", "database": "connected"}</signature>
+      <path>apps/efofx-estimate/app/main.py (to be enhanced)</path>
+    </interface>
+    <interface>
+      <name>Sentry SDK Initialization</name>
+      <kind>Error tracking</kind>
+      <signature>sentry_sdk.init(dsn=..., integrations=[FastApiIntegration()], environment=..., release=...)</signature>
+      <path>apps/efofx-estimate/app/main.py (to be added)</path>
+    </interface>
+    <interface>
+      <name>Test Error Endpoint</name>
+      <kind>REST endpoint</kind>
+      <signature>GET /test-error → raises intentional exception for Sentry testing</signature>
+      <path>apps/efofx-estimate/app/main.py (to be created)</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+Backend uses pytest with pytest-asyncio for async testing. MongoDB connection testing requires async test client. Sentry testing requires triggering errors and verifying capture. Use httpx test client for FastAPI endpoints. Test both happy path (successful connection) and error scenarios (connection failure, database unavailable).
+    </standards>
+    <locations>
+apps/efofx-estimate/tests/ (backend tests)
+Test MongoDB connection: test_db_connection.py
+Test Sentry integration: test_sentry.py
+Test health endpoint: test_health.py
+    </locations>
+    <ideas>
+- AC Test 1: Verify mongodb.py has Motor client initialization (ALREADY EXISTS - verify it works)
+- AC Test 2: Verify connection pool settings (Motor defaults or custom 10-50 connections)
+- AC Test 3: Verify database name from environment variable (settings.MONGO_DB_NAME)
+- AC Test 4: Verify health check function exists and works (ALREADY EXISTS - test it)
+- AC Test 5: Test FastAPI app startup establishes MongoDB connection successfully
+- AC Test 6: Test health endpoint includes database status check {"status": "healthy", "database": "connected"}
+- AC Test 7: Verify Sentry SDK initialized in main.py with DSN from env var
+- AC Test 8: Verify Sentry FastAPI integration enabled
+- AC Test 9: Verify Sentry environment tag set correctly (production/staging/development)
+- AC Test 10: Verify Sentry release version tracking configured
+- AC Test 11: Test error endpoint triggers exception and appears in Sentry within 30 seconds
+- Integration: Test MongoDB connection failure handling and logging
+- Integration: Test Sentry captures unhandled FastAPI exceptions
+- Integration: Test performance tracing with Sentry APM
+    </ideas>
+  </tests>
+</story-context>
