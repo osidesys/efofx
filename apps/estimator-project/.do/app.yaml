@@ -1,0 +1,79 @@
+name: efofx-estimate
+services:
+  - name: efofx-estimate-api
+    source_dir: /
+    github:
+      repo: your-username/efofx-workspace
+      branch: main
+      deploy_on_push: true
+    run_command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    environment_slug: python
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    envs:
+      - key: APP_ENV
+        value: production
+      - key: APP_HOST
+        value: 0.0.0.0
+      - key: APP_PORT
+        value: "8080"
+      - key: DEBUG
+        value: "false"
+      - key: LOG_LEVEL
+        value: "info"
+      - key: JWT_ISSUER
+        value: "efofx-estimate"
+      - key: PROMETHEUS_PORT
+        value: "9000"
+      - key: MCP_TIMEOUT
+        value: "5.0"
+      - key: LLM_TIMEOUT
+        value: "30.0"
+      - key: MAX_RETRIES
+        value: "3"
+      - key: CACHE_TTL
+        value: "120"
+      - key: ALLOWED_HOSTS
+        value: "*"
+      - key: CORS_ORIGINS
+        value: "*"
+      # These will be set from your app's environment variables or secrets
+      - key: JWT_PUBLIC_KEY_PEM
+        scope: RUN_AND_BUILD_TIME
+        value: "${JWT_PUBLIC_KEY_PEM}"
+      - key: MCP_BASE_URL
+        scope: RUN_AND_BUILD_TIME
+        value: "${MCP_BASE_URL}"
+      - key: HMAC_KEY_ID
+        scope: RUN_AND_BUILD_TIME
+        value: "${HMAC_KEY_ID}"
+      - key: HMAC_SECRET_B64
+        scope: RUN_AND_BUILD_TIME
+        value: "${HMAC_SECRET_B64}"
+      - key: MCP_JWT_PRIVATE_KEY
+        scope: RUN_AND_BUILD_TIME
+        value: "${MCP_JWT_PRIVATE_KEY}"
+      - key: OPENAI_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        value: "${OPENAI_API_KEY}"
+      - key: OPENAI_MODEL
+        scope: RUN_AND_BUILD_TIME
+        value: "gpt-4-turbo-preview"
+      - key: AUDIT_DB_URI
+        scope: RUN_AND_BUILD_TIME
+        value: "${AUDIT_DB_URI}"
+      - key: REDIS_URL
+        scope: RUN_AND_BUILD_TIME
+        value: "${REDIS_URL}"
+    health_check:
+      http_path: /health
+    internal_ports:
+      - 8080
+      - 9000
+    routes:
+      - path: /
+    cors:
+      allow_origins: ["*"]
+      allow_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+      allow_headers: ["*"]
+      allow_credentials: true

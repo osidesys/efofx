@@ -1,0 +1,73 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "efofx-estimate"
+version = "0.1.0"
+description = "Monolithic FastAPI service that powers chat-driven estimates"
+authors = [
+    {name = "EFOFX Team", email = "team@efofx.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13.5"
+dependencies = [
+    "fastapi==0.116.1",
+    "uvicorn[standard]==0.35.0",
+    "httpx==0.28.1",
+    "pydantic==2.8.2",
+    "pyjwt==2.11.1",
+    "openai==1.101.0",
+    "redis==5.0.8",
+    "prometheus-client==0.22.1",
+    "structlog==24.1.0",
+    "python-multipart",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.2",
+    "pytest-asyncio",
+    "pytest-cov",
+    "httpx",
+    "ruff==0.6.5",
+    "mypy==1.11.2",
+    "black",
+    "pre-commit",
+]
+
+[project.scripts]
+efofx-estimate = "app.main:main"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+select = ["E", "F", "I", "N", "W", "B", "C4", "UP", "ARG", "SIM", "TCH", "Q", "RUF"]
+ignore = ["E501", "B008", "C901"]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+asyncio_mode = "auto"

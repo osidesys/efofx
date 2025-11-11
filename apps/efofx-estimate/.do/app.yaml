@@ -1,0 +1,160 @@
+name: efofx-estimation-service
+region: nyc
+
+# ============================================================================
+# FastAPI Backend Service
+# ============================================================================
+services:
+  - name: efofx-api
+    # Source configuration
+    source_dir: /apps/efofx-estimate
+    github:
+      repo: brettlee/efofx-workspace  # TODO: Update with actual GitHub repo
+      branch: main
+      deploy_on_push: true  # Auto-deploy on push to main
+
+    # Build & Runtime
+    environment_slug: python
+    build_command: pip install -r requirements.txt
+    run_command: gunicorn -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 app.main:app
+
+    # Instance configuration
+    instance_count: 1
+    instance_size_slug: basic-xs  # 0.5 vCPU, 512 MB RAM
+
+    # Health check
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 10
+      period_seconds: 10
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 3
+
+    # HTTP configuration
+    http_port: 8080
+    routes:
+      - path: /
+
+    # CORS configuration
+    cors:
+      allow_origins:
+        - regex: ".*"
+      allow_methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+        - PATCH
+      allow_headers:
+        - "*"
+      allow_credentials: true
+
+    # ========================================================================
+    # Environment Variables
+    # ========================================================================
+    envs:
+      # Application Settings
+      - key: DEBUG
+        value: "false"
+      - key: APP_NAME
+        value: "efOfX Estimation Service"
+      - key: VERSION
+        value: "1.0.0"
+      - key: ENVIRONMENT
+        value: "production"
+        scope: RUN_AND_BUILD_TIME
+
+      # Server Settings
+      - key: HOST
+        value: "0.0.0.0"
+      - key: PORT
+        value: "8080"
+
+      # Security & Authentication (use DO secrets for sensitive values)
+      - key: SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_ALGORITHM
+        value: "HS256"
+      - key: JWT_EXPIRATION_HOURS
+        value: "24"
+
+      # CORS
+      - key: ALLOWED_HOSTS
+        value: '["*"]'
+      - key: ALLOWED_ORIGINS
+        value: '["https://widget.efofx.ai","https://app.efofx.ai"]'
+
+      # Database (MongoDB Atlas)
+      - key: MONGO_URI
+        scope: RUN_TIME
+        type: SECRET
+      - key: MONGO_DB_NAME
+        value: "efofx_production"
+
+      # LLM Integration (OpenAI)
+      - key: OPENAI_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: OPENAI_MODEL
+        value: "gpt-4"
+      - key: OPENAI_MAX_TOKENS
+        value: "4000"
+      - key: OPENAI_TEMPERATURE
+        value: "0.7"
+
+      # BYOK Encryption
+      - key: ENCRYPTION_KEY
+        scope: RUN_TIME
+        type: SECRET
+
+      # Error Tracking (Sentry)
+      - key: SENTRY_DSN
+        scope: RUN_TIME
+        type: SECRET
+      - key: SENTRY_ENVIRONMENT
+        value: "production"
+      - key: SENTRY_TRACES_SAMPLE_RATE
+        value: "0.1"
+
+      # Rate Limiting
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "60"
+
+      # Estimation Settings
+      - key: MAX_ESTIMATION_SESSIONS
+        value: "1000"
+      - key: SESSION_TIMEOUT_MINUTES
+        value: "30"
+
+      # File Upload Settings
+      - key: MAX_FILE_SIZE
+        value: "10485760"
+      - key: ALLOWED_IMAGE_TYPES
+        value: '["image/jpeg", "image/png", "image/webp"]'
+
+      # Logging
+      - key: LOG_LEVEL
+        value: "INFO"
+      - key: LOG_FORMAT
+        value: "json"
+
+# ============================================================================
+# Alerts Configuration
+# ============================================================================
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
+  - rule: CPU_UTILIZATION
+    value: 80  # Alert at 80% CPU utilization
+  - rule: MEM_UTILIZATION
+    value: 90  # Alert at 90% memory utilization
+  - rule: RESTART_COUNT
+    value: 5  # Alert after 5 restarts in 1 hour
