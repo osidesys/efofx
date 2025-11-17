@@ -1,6 +1,6 @@
 # Story 2.1: Create Domain-Agnostic Reference Class MongoDB Schema
 
-Status: backlog
+Status: done
 
 ## Story
 
@@ -38,13 +38,13 @@ db.reference_classes.createIndex({"tenant_id": 1, "keywords": 1})
 
 ## Tasks / Subtasks
 
-- [ ] Create Pydantic model `app/models/reference_class.py`
-- [ ] Add all required fields with proper types
-- [ ] Add Pydantic validator for cost_breakdown_template sum
-- [ ] Create MongoDB migration script for indexes
-- [ ] Test model validation with valid data
-- [ ] Test model validation with invalid data (percentages != 1.0)
-- [ ] Verify indexes created successfully
+- [x] Create Pydantic model `app/models/reference_class.py`
+- [x] Add all required fields with proper types
+- [x] Add Pydantic validator for cost_breakdown_template sum
+- [x] Create MongoDB migration script for indexes
+- [x] Test model validation with valid data
+- [x] Test model validation with invalid data (percentages != 1.0)
+- [x] Verify indexes created successfully
 
 ## Dev Notes
 
@@ -81,8 +81,18 @@ Story 1.4 (MongoDB connected)
 
 ### Completion Notes List
 
-<!-- To be filled by dev agent upon completion -->
+- Created domain-agnostic Pydantic model with flexible attributes dict
+- Implemented cost_breakdown_template validator with 1% tolerance for floating point errors
+- All 8 tests passing (valid data, invalid sums, tenant-specific, domain-specific attributes)
+- MongoDB indexes created successfully for efficient querying
+- Fixed MongoDB boolean check bug in get_database() function
 
 ### File List
 
-<!-- NEW/MODIFIED/DELETED files will be listed here by dev agent -->
+**NEW:**
+- `app/models/reference_class.py` - Pydantic models (ReferenceClass, CostDistribution, TimelineDistribution)
+- `scripts/migrations/001_create_reference_class_indexes.py` - Index creation migration
+- `tests/test_reference_class_model.py` - Comprehensive model validation tests
+
+**MODIFIED:**
+- `app/db/mongodb.py` - Fixed get_database() to use `is None` check instead of boolean check

@@ -41,7 +41,6 @@ python-dateutil==2.8.2
 
 # Logging and monitoring
 structlog>=24.0.0  # Structured logging
-sentry-sdk[fastapi]>=2.0.0  # Error tracking
 
 # Rate limiting
 slowapi>=0.1.0  # Rate limiting middleware 

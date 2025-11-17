@@ -113,14 +113,15 @@ services:
         scope: RUN_TIME
         type: SECRET
 
-      # Error Tracking (Sentry)
-      - key: SENTRY_DSN
-        scope: RUN_TIME
-        type: SECRET
-      - key: SENTRY_ENVIRONMENT
-        value: "production"
-      - key: SENTRY_TRACES_SAMPLE_RATE
-        value: "0.1"
+      # Error Tracking (Sentry - Optional, currently disabled)
+      # Uncomment if using Sentry for error tracking
+      # - key: SENTRY_DSN
+      #   scope: RUN_TIME
+      #   type: SECRET
+      # - key: SENTRY_ENVIRONMENT
+      #   value: "production"
+      # - key: SENTRY_TRACES_SAMPLE_RATE
+      #   value: "0.1"
 
       # Rate Limiting
       - key: RATE_LIMIT_ENABLED

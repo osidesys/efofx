@@ -1,4 +1,4 @@
-# generated: 2025-11-10
+# generated: 2025-11-16
 # project: efOfX Estimation Service
 # project_key: efOfX Estimation Service
 # tracking_system: file-system
@@ -29,7 +29,7 @@
 # - SM typically drafts next story after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', SM reviews, then Dev moves to 'done'
 
-generated: 2025-11-10
+generated: 2025-11-16
 project: efOfX Estimation Service
 project_key: efOfX Estimation Service
 tracking_system: file-system
@@ -38,73 +38,73 @@ story_location: "{project-root}/docs/stories"
 development_status:
   # Epic 1: Foundation & Infrastructure Setup
   epic-1: backlog
-  1-1-initialize-white-label-widget-project: review
-  1-2-setup-backend-project-structure-dependencies: review
-  1-3-configure-digitalocean-deployment-auto-deploy: review
-  1-4-setup-mongodb-atlas-sentry-monitoring: review
-  1-5-manual-qa-gate-foundation-verification: review
+  1-1-initialize-white-label-widget-project: done
+  1-2-setup-backend-project-structure-dependencies: done
+  1-3-configure-digitalocean-deployment-auto-deploy: done
+  1-4-setup-mongodb-atlas-sentry-monitoring: done
+  1-5-manual-qa-gate-foundation-verification: done
   epic-1-retrospective: optional
 
   # Epic 2: Reference Class Engine & Synthetic Data
   epic-2: backlog
-  2-1-create-domain-agnostic-reference-class-mongodb-schema: backlog
-  2-2-implement-rcf-matching-algorithm: backlog
-  2-3-generate-synthetic-construction-reference-classes: backlog
-  2-4-implement-baseline-estimate-calculation: backlog
-  2-5-apply-regional-complexity-adjustments: backlog
-  2-6-manual-qa-gate-estimation-engine-verification: backlog
+  2-1-create-domain-agnostic-reference-class-mongodb-schema: done
+  2-2-implement-rcf-matching-algorithm: drafted
+  2-3-generate-synthetic-construction-reference-classes: drafted
+  2-4-implement-baseline-estimate-calculation: drafted
+  2-5-apply-regional-complexity-adjustments: drafted
+  2-6-manual-qa-gate-estimation-engine-verification: drafted
   epic-2-retrospective: optional
 
   # Epic 3: Multi-Tenant Infrastructure & Security
   epic-3: backlog
-  3-1-create-tenant-registration-management: backlog
-  3-2-implement-jwt-authentication-token-management: backlog
-  3-3-implement-byok-encryption-for-openai-keys: backlog
-  3-4-enforce-tenant-isolation-middleware: backlog
-  3-5-implement-per-tenant-rate-limiting: backlog
-  3-6-create-mongodb-indexes-for-tenant-isolation: backlog
-  3-7-manual-qa-gate-multi-tenant-security-verification: backlog
+  3-1-create-tenant-registration-management: drafted
+  3-2-implement-jwt-authentication-token-management: drafted
+  3-3-implement-byok-encryption-for-openai-keys: drafted
+  3-4-enforce-tenant-isolation-middleware: drafted
+  3-5-implement-per-tenant-rate-limiting: drafted
+  3-6-create-mongodb-indexes-for-tenant-isolation: drafted
+  3-7-manual-qa-gate-multi-tenant-security-verification: drafted
   epic-3-retrospective: optional
 
   # Epic 4: LLM Integration & Conversational Scoping
   epic-4: backlog
-  4-1-create-openai-client-with-byok-support: backlog
-  4-2-implement-git-based-prompt-management: backlog
-  4-3-generate-estimate-narratives-with-llm: backlog
-  4-4-implement-conversational-scoping-chat-engine: backlog
-  4-5-implement-llm-response-caching: backlog
-  4-6-manual-qa-gate-llm-integration-verification: backlog
+  4-1-create-openai-client-with-byok-support: drafted
+  4-2-implement-git-based-prompt-management: drafted
+  4-3-generate-estimate-narratives-with-llm: drafted
+  4-4-implement-conversational-scoping-chat-engine: drafted
+  4-5-implement-llm-response-caching: drafted
+  4-6-manual-qa-gate-llm-integration-verification: drafted
   epic-4-retrospective: optional
 
   # Epic 5: White Label Chat Widget
   epic-5: backlog
-  5-1-implement-shadow-dom-widget-container: backlog
-  5-2-create-widget-branding-configuration-system: backlog
-  5-3-implement-conversational-chat-ui: backlog
-  5-4-implement-lead-capture-form: backlog
-  5-5-display-estimate-results-in-widget: backlog
-  5-6-implement-widget-security-hardening: backlog
-  5-7-create-widget-embed-code-documentation: backlog
-  5-8-implement-widget-analytics-monitoring: backlog
-  5-9-manual-qa-gate-widget-integration-verification: backlog
+  5-1-implement-shadow-dom-widget-container: drafted
+  5-2-create-widget-branding-configuration-system: drafted
+  5-3-implement-conversational-chat-ui: drafted
+  5-4-implement-lead-capture-form: drafted
+  5-5-display-estimate-results-in-widget: drafted
+  5-6-implement-widget-security-hardening: drafted
+  5-7-create-widget-embed-code-documentation: drafted
+  5-8-implement-widget-analytics-monitoring: drafted
+  5-9-manual-qa-gate-widget-integration-verification: drafted
   epic-5-retrospective: optional
 
   # Epic 6: Feedback & Calibration System
   epic-6: backlog
-  6-1-create-customer-feedback-magic-link-system: backlog
-  6-2-create-contractor-feedback-dashboard: backlog
-  6-3-calculate-calibration-metrics: backlog
-  6-4-display-calibration-dashboard-for-tenants: backlog
-  6-5-implement-synthetic-data-validation-tuning: backlog
-  6-6-implement-llm-prompt-refinement-from-feedback: backlog
-  6-7-manual-qa-gate-feedback-loop-verification: backlog
+  6-1-create-customer-feedback-magic-link-system: drafted
+  6-2-create-contractor-feedback-dashboard: drafted
+  6-3-calculate-calibration-metrics: drafted
+  6-4-display-calibration-dashboard-for-tenants: drafted
+  6-5-implement-synthetic-data-validation-tuning: drafted
+  6-6-implement-llm-prompt-refinement-from-feedback: drafted
+  6-7-manual-qa-gate-feedback-loop-verification: drafted
   epic-6-retrospective: optional
 
   # Epic 7: Code Consolidation & Refactoring
   epic-7: backlog
-  7-1-identify-and-extract-shared-backend-utilities: backlog
-  7-2-create-shared-frontend-components-library: backlog
-  7-3-apply-yagni-remove-unused-code-and-features: backlog
-  7-4-establish-code-quality-standards-documentation: backlog
-  7-5-manual-qa-gate-code-quality-maintainability-verification: backlog
+  7-1-identify-and-extract-shared-backend-utilities: drafted
+  7-2-create-shared-frontend-components-library: drafted
+  7-3-apply-yagni-remove-unused-code-and-features: drafted
+  7-4-establish-code-quality-standards-documentation: drafted
+  7-5-manual-qa-gate-code-quality-maintainability-verification: drafted
   epic-7-retrospective: optional

@@ -13,18 +13,23 @@ import os
 
 class Settings(BaseSettings):
     """Application settings with environment variable support."""
-    
+
     # Application
     DEBUG: bool = Field(default=False, env="DEBUG")
     APP_NAME: str = Field(default="efOfX Estimation Service", env="APP_NAME")
     VERSION: str = Field(default="1.0.0", env="VERSION")
-    
+    ENVIRONMENT: str = Field(default="development", env="ENVIRONMENT")
+
     # Server
     HOST: str = Field(default="0.0.0.0", env="HOST")
     PORT: int = Field(default=8000, env="PORT")
-    
+
     # Security
     SECRET_KEY: str = Field(..., env="SECRET_KEY")
+    JWT_SECRET_KEY: str = Field(..., env="JWT_SECRET_KEY")
+    JWT_ALGORITHM: str = Field(default="HS256", env="JWT_ALGORITHM")
+    JWT_EXPIRATION_HOURS: int = Field(default=24, env="JWT_EXPIRATION_HOURS")
+    ENCRYPTION_KEY: str = Field(..., env="ENCRYPTION_KEY")
     ALLOWED_HOSTS: List[str] = Field(default=["*"], env="ALLOWED_HOSTS")
     ALLOWED_ORIGINS: List[str] = Field(default=["*"], env="ALLOWED_ORIGINS")
     
@@ -51,7 +56,17 @@ class Settings(BaseSettings):
     
     # Logging
     LOG_LEVEL: str = Field(default="INFO", env="LOG_LEVEL")
-    
+    LOG_FORMAT: str = Field(default="json", env="LOG_FORMAT")
+
+    # Rate Limiting
+    RATE_LIMIT_ENABLED: bool = Field(default=True, env="RATE_LIMIT_ENABLED")
+    RATE_LIMIT_PER_MINUTE: int = Field(default=60, env="RATE_LIMIT_PER_MINUTE")
+
+    # Error Tracking (Optional - Sentry removed but keeping config for backwards compatibility)
+    SENTRY_DSN: Optional[str] = Field(default=None, env="SENTRY_DSN")
+    SENTRY_ENVIRONMENT: Optional[str] = Field(default=None, env="SENTRY_ENVIRONMENT")
+    SENTRY_TRACES_SAMPLE_RATE: Optional[float] = Field(default=None, env="SENTRY_TRACES_SAMPLE_RATE")
+
     class Config:
         env_file = ".env"
         case_sensitive = False

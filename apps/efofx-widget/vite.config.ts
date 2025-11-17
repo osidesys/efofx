@@ -8,6 +8,10 @@ export default defineConfig({
     react(),
     cssInjectedByJsPlugin(),
   ],
+  define: {
+    'process.env': {},
+    'global': 'globalThis',
+  },
   build: {
     lib: {
       entry: 'src/main.tsx',

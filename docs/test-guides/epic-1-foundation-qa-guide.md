@@ -1,7 +1,7 @@
 # Epic 1: Foundation & Infrastructure - Manual QA Test Guide
 
-**Version:** 1.0
-**Date:** 2025-11-10
+**Version:** 1.1
+**Date:** 2025-11-16 (Sentry integration removed)
 **Epic:** Foundation & Infrastructure Setup
 **Tester Profile:** No prior codebase knowledge required
 
@@ -27,10 +27,10 @@ Before starting, ensure you have access to:
 - ✅ **GitHub Account** - For repository access and auto-deploy testing
 - ✅ **MongoDB Atlas Account** - Free tier (M0) is sufficient
   - Sign up at: https://www.mongodb.com/cloud/atlas
-- ✅ **Sentry Account** - Free tier (5,000 errors/month) is sufficient
-  - Sign up at: https://sentry.io/signup/
 - ✅ **DigitalOcean Account** - For deployment testing (optional for basic testing)
   - Sign up at: https://www.digitalocean.com/
+
+**Note:** Sentry integration has been removed. Error tracking uses structured logging via `structlog` instead.
 
 ### Required Tools
 
@@ -150,9 +150,6 @@ nano .env  # or: code .env, vim .env, etc.
 # JWT_SECRET_KEY=[generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"]
 # ENCRYPTION_KEY=[generate with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"]
 
-# OPTIONAL (for Sentry testing):
-# SENTRY_DSN=https://[your-sentry-dsn]@sentry.io/[project-id]
-
 # Save and close the file
 ```
 
@@ -163,12 +160,6 @@ nano .env  # or: code .env, vim .env, etc.
 4. Copy the connection string and paste it into MONGO_URI in .env
 5. Replace `<password>` with your database password
 6. Change database name from `test` to `efofx_production`
-
-**Sentry Setup (Optional):**
-1. Go to https://sentry.io/
-2. Create a new project (select "FastAPI" as platform)
-3. Copy the DSN from the setup page
-4. Paste into SENTRY_DSN in .env
 
 ---
 
@@ -214,7 +205,6 @@ INFO:     Started server process
 INFO:     Waiting for application startup.
 INFO:     Starting efOfX Estimation Service...
 INFO:     MongoDB connection established
-INFO:     Sentry SDK initialized successfully (or: Sentry DSN not configured)
 INFO:     Application startup complete.
 ```
 
@@ -282,44 +272,39 @@ curl http://localhost:8000/health | jq '.database'
 
 ---
 
-### TC1.5: Sentry Captures Test Error
+### TC1.5: Error Logging Works (Sentry Removed)
 
-**Objective:** Verify Sentry error tracking is configured and captures errors
+**Objective:** Verify structured logging captures errors correctly
 
-**Prerequisites:** SENTRY_DSN must be configured in .env
+**Status:** ⚠️ **UPDATED** - Sentry integration removed, now using `structlog` for error tracking
 
 **Steps:**
 ```bash
-# Trigger test error endpoint
-curl http://localhost:8000/test-error
+# Check that server logs errors correctly
+# You can trigger an error by requesting a non-existent endpoint
+curl http://localhost:8000/nonexistent-endpoint
 ```
 
 **Expected Output:**
 ```json
 {
-  "detail": "This is a test error to verify Sentry integration"
+  "detail": "Not Found"
 }
 ```
 
 **Verification Steps:**
-1. Check server logs - should see:
-   ```
-   ERROR: Test error endpoint triggered - intentional error for Sentry testing
-   ```
-
-2. Go to Sentry dashboard (https://sentry.io/)
-3. Navigate to your project
-4. Check "Issues" tab
+1. Check server logs - should see structured error logging
+2. Logs should be in JSON format with timestamp, level, and message
+3. All errors are logged to stdout (captured by DigitalOcean App Platform in production)
 
 **Expected Results:**
-- ✅ Error appears in Sentry dashboard within 30 seconds
-- ✅ Error shows full stack trace
-- ✅ Environment tag matches .env configuration
-- ✅ Release version is "1.0.0"
+- ✅ Error is logged to console with structured format
+- ✅ No application crash
+- ✅ HTTP 404 response returned
 
-**Pass Criteria:** Error captured in Sentry with full details
+**Pass Criteria:** Errors are logged in structured format
 
-**Note:** If SENTRY_DSN is not configured, this test will be skipped. Server will log: "Sentry DSN not configured, error tracking disabled"
+**Note:** Sentry has been removed. Error tracking now relies on structured logging via `structlog`. For production error monitoring, logs are available in DigitalOcean App Platform dashboard.
 
 ---
 
@@ -395,7 +380,7 @@ When all test cases pass, you should have:
 | **Backend Server** | Running on port 8000, no errors |
 | **Health Endpoint** | Returns 200 OK, response time < 100ms |
 | **MongoDB** | Connected, status visible in /health |
-| **Sentry** | Capturing errors (if configured) |
+| **Error Logging** | Structured logs via structlog |
 | **DO Config** | Complete app.yaml with alerts |
 | **Widget Embed** | Loads in test HTML page |
 
@@ -404,7 +389,7 @@ When all test cases pass, you should have:
 - Widget bundle size: < 600KB ✅ (actual: 578KB)
 - Backend health check: < 100ms ✅
 - MongoDB connection: Established on startup ✅
-- Sentry error capture: < 30 seconds ✅
+- Error logging: Real-time to stdout ✅
 
 ---
 
@@ -510,17 +495,19 @@ ERROR: Failed to connect to MongoDB
 
 ---
 
-### Issue: Sentry errors not appearing
+### Issue: Errors not being logged
 
 **Symptoms:**
-- /test-error returns 500 but nothing in Sentry dashboard
+- Errors occur but no logs appear in console
 
 **Solution:**
-1. Verify SENTRY_DSN is correctly configured in .env
-2. Check server logs for "Sentry SDK initialized successfully"
-3. Verify Sentry project is active
-4. Wait 30-60 seconds - Sentry may batch events
-5. Check Sentry project settings for rate limiting
+1. Verify logging is configured correctly in app/main.py
+2. Check that `structlog` is installed: `pip list | grep structlog`
+3. Ensure console output is not being suppressed
+4. Verify DEBUG mode is enabled in .env for detailed logs
+5. Check that you're looking at the correct terminal window (where uvicorn is running)
+
+**Note:** Sentry integration has been removed. All errors are logged to stdout using `structlog`.
 
 ---
 
@@ -553,7 +540,7 @@ Before marking Epic 1 as complete, verify:
 - [ ] **TC1.2** - Backend starts without errors
 - [ ] **TC1.3** - Health endpoint returns 200 OK
 - [ ] **TC1.4** - MongoDB connection status is "connected"
-- [ ] **TC1.5** - Sentry captures test errors (if configured)
+- [ ] **TC1.5** - Error logging works via structlog
 - [ ] **TC1.6** - DigitalOcean app.yaml exists with correct config
 - [ ] **TC1.7** - Widget embeds in test HTML page
 
@@ -585,6 +572,6 @@ After Epic 1 approval:
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** 2025-11-10
+**Document Version:** 1.1
+**Last Updated:** 2025-11-16 (Sentry integration removed)
 **Next Review:** After Epic 1 QA completion

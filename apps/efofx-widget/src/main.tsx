@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
@@ -29,11 +28,9 @@ export function init(config: WidgetConfig = {}) {
   // Render widget with Shadow DOM isolation
   const root = createRoot(container);
   root.render(
-    <StrictMode>
-      <ShadowDOMWrapper>
-        <App />
-      </ShadowDOMWrapper>
-    </StrictMode>,
+    <ShadowDOMWrapper>
+      <App />
+    </ShadowDOMWrapper>,
   );
 
   return {

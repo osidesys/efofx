@@ -24,17 +24,26 @@ logger = logging.getLogger(__name__)
 # Create main API router
 api_router = APIRouter()
 
-# Service instances
-estimation_service = EstimationService()
-chat_service = ChatService()
-feedback_service = FeedbackService()
+# Service dependency injection (lazy initialization)
+def get_estimation_service() -> EstimationService:
+    """Get estimation service instance."""
+    return EstimationService()
+
+def get_chat_service() -> ChatService:
+    """Get chat service instance."""
+    return ChatService()
+
+def get_feedback_service() -> FeedbackService:
+    """Get feedback service instance."""
+    return FeedbackService()
 
 
 # Estimation endpoints
 @api_router.post("/estimate/start", response_model=EstimationResponse)
 async def start_estimation(
     request: EstimationRequest,
-    tenant: Tenant = Depends(get_current_tenant)
+    tenant: Tenant = Depends(get_current_tenant),
+    estimation_service: EstimationService = Depends(get_estimation_service)
 ):
     """Start a new estimation session."""
     try:
@@ -52,7 +61,8 @@ async def start_estimation(
 @api_router.get("/estimate/{session_id}", response_model=EstimationResponse)
 async def get_estimation(
     session_id: str,
-    tenant: Tenant = Depends(get_current_tenant)
+    tenant: Tenant = Depends(get_current_tenant),
+    estimation_service: EstimationService = Depends(get_estimation_service)
 ):
     """Get estimation session status and results."""
     try:
@@ -70,7 +80,8 @@ async def get_estimation(
 async def upload_image(
     session_id: str,
     file: UploadFile = File(...),
-    tenant: Tenant = Depends(get_current_tenant)
+    tenant: Tenant = Depends(get_current_tenant),
+    estimation_service: EstimationService = Depends(get_estimation_service)
 ):
     """Upload image for estimation session."""
     try:
@@ -89,7 +100,8 @@ async def upload_image(
 @api_router.post("/chat/send", response_model=ChatResponse)
 async def send_chat_message(
     request: ChatRequest,
-    tenant: Tenant = Depends(get_current_tenant)
+    tenant: Tenant = Depends(get_current_tenant),
+    chat_service: ChatService = Depends(get_chat_service)
 ):
     """Send a chat message for estimation."""
     try:
@@ -107,7 +119,8 @@ async def send_chat_message(
 @api_router.get("/chat/{session_id}/history")
 async def get_chat_history(
     session_id: str,
-    tenant: Tenant = Depends(get_current_tenant)
+    tenant: Tenant = Depends(get_current_tenant),
+    chat_service: ChatService = Depends(get_chat_service)
 ):
     """Get chat history for a session."""
     try:
@@ -125,7 +138,8 @@ async def get_chat_history(
 @api_router.post("/feedback/submit")
 async def submit_feedback(
     feedback: FeedbackCreate,
-    tenant: Tenant = Depends(get_current_tenant)
+    tenant: Tenant = Depends(get_current_tenant),
+    feedback_service: FeedbackService = Depends(get_feedback_service)
 ):
     """Submit feedback for an estimation."""
     try:
@@ -142,7 +156,8 @@ async def submit_feedback(
 
 @api_router.get("/feedback/summary", response_model=FeedbackSummary)
 async def get_feedback_summary(
-    tenant: Tenant = Depends(get_current_tenant)
+    tenant: Tenant = Depends(get_current_tenant),
+    feedback_service: FeedbackService = Depends(get_feedback_service)
 ):
     """Get feedback summary for tenant."""
     try:

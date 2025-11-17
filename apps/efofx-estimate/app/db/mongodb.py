@@ -48,7 +48,7 @@ async def close_mongo_connection():
 
 def get_database() -> AsyncIOMotorDatabase:
     """Get database instance."""
-    if not _database:
+    if _database is None:
         raise RuntimeError("Database not initialized. Call connect_to_mongo() first.")
     return _database
 
@@ -155,8 +155,9 @@ async def create_indexes():
 async def health_check():
     """Check database health."""
     try:
-        db = get_database()
-        await db.command("ping")
+        if _database is None:
+            return False
+        await _database.command("ping")
         return True
     except Exception as e:
         logger.error(f"Database health check failed: {e}")
@@ -166,8 +167,9 @@ async def health_check():
 async def get_database_stats():
     """Get database statistics."""
     try:
-        db = get_database()
-        stats = await db.command("dbStats")
+        if _database is None:
+            return None
+        stats = await _database.command("dbStats")
         return {
             "collections": stats.get("collections", 0),
             "data_size": stats.get("dataSize", 0),

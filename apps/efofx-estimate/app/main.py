@@ -21,26 +21,6 @@ from app.db.mongodb import connect_to_mongo, close_mongo_connection, health_chec
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize Sentry SDK for error tracking
-SENTRY_DSN = os.getenv("SENTRY_DSN")
-if SENTRY_DSN:
-    try:
-        import sentry_sdk
-        from sentry_sdk.integrations.fastapi import FastApiIntegration
-
-        sentry_sdk.init(
-            dsn=SENTRY_DSN,
-            integrations=[FastApiIntegration()],
-            environment=os.getenv("SENTRY_ENVIRONMENT", "development"),
-            release=os.getenv("VERSION", "1.0.0"),
-            traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
-        )
-        logger.info("Sentry SDK initialized successfully")
-    except Exception as e:
-        logger.warning(f"Failed to initialize Sentry SDK: {e}")
-else:
-    logger.info("Sentry DSN not configured, error tracking disabled")
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -114,23 +94,6 @@ async def health_check():
         "database": db_status,
         "version": "1.0.0"
     }
-
-@app.get("/test-error")
-async def test_error():
-    """
-    Test endpoint to verify Sentry error capture.
-
-    This endpoint intentionally raises an exception to test error tracking.
-    Only use in development/testing environments.
-
-    Raises:
-        HTTPException: Always raises a 500 error for testing
-    """
-    logger.error("Test error endpoint triggered - intentional error for Sentry testing")
-    raise HTTPException(
-        status_code=500,
-        detail="This is a test error to verify Sentry integration"
-    )
 
 @app.get("/")
 async def root():

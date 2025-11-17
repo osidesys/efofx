@@ -8,7 +8,7 @@ for the estimation service including API key validation and tenant management.
 from fastapi import HTTPException, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional, Dict, Any
-import jwt
+from jose import jwt
 import logging
 from datetime import datetime, timedelta
 

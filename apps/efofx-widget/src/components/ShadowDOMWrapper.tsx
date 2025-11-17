@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import type { Root } from 'react-dom/client';
 
@@ -14,32 +14,45 @@ interface ShadowDOMWrapperProps {
  */
 export const ShadowDOMWrapper: React.FC<ShadowDOMWrapperProps> = ({ children }) => {
   const hostRef = useRef<HTMLDivElement>(null);
-  const [shadowRoot, setShadowRoot] = useState<ShadowRoot | null>(null);
-  const rootRef = useRef<Root | null>(null);
+  const shadowRootRef = useRef<ShadowRoot | null>(null);
+  const reactRootRef = useRef<Root | null>(null);
 
   useEffect(() => {
-    if (hostRef.current && !shadowRoot) {
-      // Create shadow root with open mode
-      const shadow = hostRef.current.attachShadow({ mode: 'open' });
-      setShadowRoot(shadow);
+    if (!hostRef.current) return;
+
+    // Only create shadow root once
+    if (!shadowRootRef.current) {
+      // Check if shadow root already exists (safety check)
+      const existingShadow = hostRef.current.shadowRoot;
+      if (existingShadow) {
+        shadowRootRef.current = existingShadow;
+      } else {
+        shadowRootRef.current = hostRef.current.attachShadow({ mode: 'open' });
+      }
 
       // Create a container div inside shadow DOM
       const container = document.createElement('div');
       container.id = 'efofx-widget-root';
-      shadow.appendChild(container);
+      shadowRootRef.current.appendChild(container);
 
-      // Create React root and render children
-      rootRef.current = createRoot(container);
-      rootRef.current.render(children);
+      // Create React root
+      reactRootRef.current = createRoot(container);
+    }
+
+    // Render children (will update on children change)
+    if (reactRootRef.current) {
+      reactRootRef.current.render(children);
     }
 
     return () => {
-      if (rootRef.current) {
-        rootRef.current.unmount();
-        rootRef.current = null;
+      // Only unmount on final cleanup
+      if (reactRootRef.current) {
+        reactRootRef.current.unmount();
+        reactRootRef.current = null;
+        shadowRootRef.current = null;
       }
     };
-  }, [shadowRoot, children]);
+  }, [children]);
 
   return <div ref={hostRef} className="efofx-widget-host" />;
 };
